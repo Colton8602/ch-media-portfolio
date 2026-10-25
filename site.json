@@ -1,0 +1,17 @@
+{
+  "heading": "Media work by CH",
+  "intro": "Photo and video projects from my media class, collected in one place.",
+  "about": "I'm a media student telling stories through photo and video. Every project I finish lands here.",
+  "focus": "Photography, Video, Editing",
+  "contact": "",
+  "projects": [
+    {
+      "title": "Personal Logo",
+      "date": "2026-10-25",
+      "description": "",
+      "media": [
+        "/media/uploads/personal-logo.png"
+      ]
+    }
+  ]
+}

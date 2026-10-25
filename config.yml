@@ -1,0 +1,35 @@
+# Replace the repo line with YOUR GitHub username and repository name, e.g. choward05/ch-media
+backend:
+  name: github
+  repo: YOUR-GITHUB-USERNAME/YOUR-REPO-NAME
+  branch: main
+
+media_folder: media/uploads
+public_folder: /media/uploads
+
+collections:
+  - name: site
+    label: My Site
+    files:
+      - name: portfolio
+        label: Portfolio
+        file: content/site.json
+        fields:
+          - { label: Headline, name: heading, widget: string }
+          - { label: Intro under the headline, name: intro, widget: text, required: false }
+          - { label: About statement, name: about, widget: text, required: false }
+          - { label: "Focus areas (separate with commas)", name: focus, widget: string, required: false }
+          - { label: Contact line, name: contact, widget: string, required: false }
+          - label: Projects
+            name: projects
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Date, name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+              - { label: Description, name: description, widget: text, required: false }
+              - label: Photos and videos
+                name: media
+                widget: list
+                hint: "Upload a photo or video file, or paste a YouTube or Vimeo link for long videos."
+                field: { label: File or link, name: file, widget: file }
