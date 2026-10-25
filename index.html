@@ -1,12 +1,467 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>CH Media Admin</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CH Media Portfolio</title>
+<meta name="description" content="Photo and video projects from my media class, collected in one place.">
+<meta name="theme-color" content="#060709">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CH Media Portfolio">
+<meta property="og:description" content="Photo and video projects from my media class, collected in one place.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@300;400;500;600&display=swap">
+<style>
+/* Concept: a camera viewfinder. Quiet black page, corner brackets frame whatever is in focus, HUD-style mono labels carry the metadata. */
+:root{
+  --bg:#060709;
+  --surface:#0d1015;
+  --raise:#151a22;
+  --line:#242b36;
+  --fg:#f4f6f9;
+  --muted:#99a2b0;
+  --accent:#0a69ff;
+  --accent-ink:#ffffff;
+  --danger:#ff7a7a;
+  --display:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{
+  background:var(--bg);color:var(--fg);
+  font:400 16px/1.55 var(--body);
+  margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+img{max-width:100%}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto}
+.label{font:500 .72rem/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:0 22px;border-radius:999px;
+  border:1px solid var(--line);background:transparent;color:var(--fg);
+  font:600 .78rem/1 var(--display);letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;
+}
+.btn:hover{border-color:var(--muted)}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:20px}
+.brand{display:block;line-height:0}
+.brand img{height:64px;width:auto;display:block}
+.nav{display:flex;align-items:center;gap:4px 8px;flex-wrap:wrap}
+.nav-link{
+  font:500 .74rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;padding:15px 12px;border-radius:999px;
+}
+.nav-link:hover{color:var(--fg)}
+
+/* hero */
+.hero{padding-block:clamp(40px,8vw,96px) clamp(40px,6vw,72px)}
+.hud{display:flex;align-items:center;gap:8px 18px;flex-wrap:wrap;font:500 .72rem/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.rec{display:inline-flex;align-items:center;gap:8px;color:var(--fg)}
+.rec i{width:8px;height:8px;border-radius:50%;background:var(--accent);display:block}
+.rec.off i{background:var(--line)}
+@media (prefers-reduced-motion:no-preference){
+  .rec:not(.off) i{animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.3}}
+}
+h1{
+  font:300 clamp(2.4rem,7.2vw,5rem)/1.05 var(--display);letter-spacing:-.025em;
+  margin:24px 0 0;max-width:15ch;text-wrap:balance;
+}
+.intro{max-width:52ch;color:var(--muted);font-size:1.125rem;margin:20px 0 0}
+
+/* work */
+section[id]{scroll-margin-top:16px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-bottom:20px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--muted);
+  font:500 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+}
+.chip:hover{color:var(--fg)}
+.chip[aria-pressed="true"]{color:var(--fg);border-color:var(--fg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:20px}
+.tile{
+  position:relative;display:block;width:100%;aspect-ratio:4/3;padding:0;border:0;border-radius:6px;overflow:hidden;
+  background:var(--surface);color:var(--fg);cursor:pointer;text-align:left;font:inherit;
+}
+.tile .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:grid;place-items:center;background:var(--raise);font:500 .7rem/1 var(--mono);letter-spacing:.14em;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.tile .cover{transition:transform .6s ease}.tile:hover .cover{transform:scale(1.035)}}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(6,7,9,.9),rgba(6,7,9,0) 58%);pointer-events:none}
+.tile-top{position:absolute;left:18px;top:16px;z-index:2}
+.pill{
+  display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;
+  background:rgba(6,7,9,.66);font:500 .66rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--fg);
+}
+.pill i{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.tile-bottom{position:absolute;left:18px;right:18px;bottom:16px;z-index:2}
+.tile-title{font:500 1.05rem/1.25 var(--display);margin:0;overflow-wrap:anywhere}
+.tile-meta{margin:6px 0 0;font:400 .7rem/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.b{position:absolute;width:22px;height:22px;border:2px solid #fff;opacity:0;pointer-events:none;z-index:3}
+.b.tl{top:10px;left:10px;border-right:0;border-bottom:0;border-top-left-radius:7px}
+.b.tr{top:10px;right:10px;border-left:0;border-bottom:0;border-top-right-radius:7px}
+.b.bl{bottom:10px;left:10px;border-right:0;border-top:0;border-bottom-left-radius:7px}
+.b.br{bottom:10px;right:10px;border-left:0;border-top:0;border-bottom-right-radius:7px}
+@media (prefers-reduced-motion:no-preference){.b{transition:opacity .25s ease}}
+.tile:hover .b,.tile:focus-visible .b{opacity:.95}
+.tile:focus-visible{outline-offset:4px}
+
+.empty{
+  grid-column:1/-1;position:relative;min-height:300px;display:grid;place-items:center;text-align:center;
+  padding:48px 24px;border-radius:6px;background:var(--surface);
+}
+.empty .b{opacity:.35;border-color:var(--muted)}
+.empty h3{font:300 1.6rem/1.2 var(--display);margin:0 0 8px;letter-spacing:-.01em}
+.empty p{margin:0 auto;color:var(--muted);max-width:40ch}
+.empty-inner{position:relative;z-index:1}
+.msg{margin:0;color:var(--muted)}
+
+/* about */
+.about{position:relative;margin-top:clamp(40px,6vw,64px);padding:22px clamp(22px,3vw,32px);border-radius:6px;background:var(--surface);display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
+.about .b{opacity:.4;border-color:var(--muted);width:14px;height:14px;top:7px;left:7px;right:auto;bottom:auto}
+.about .b.tr{left:auto;right:7px}
+.about .b.bl{top:auto;bottom:7px}
+.about .b.br{top:auto;left:auto;right:7px;bottom:7px}
+.about-text{margin:0;flex:1 1 300px;max-width:60ch;font:400 .95rem/1.5 var(--body);color:var(--muted);overflow-wrap:anywhere}
+.focus{display:flex;gap:6px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.focus li{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--bg);font:500 .64rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}
+.contact{color:var(--fg);overflow-wrap:anywhere;display:flex;align-items:center;gap:10px}
+.contact::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+
+footer{border-top:1px solid var(--line);margin-top:clamp(56px,9vw,104px);padding-block:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer img{height:44px;width:auto;display:block}
+
+/* viewer */
+.lb{
+  position:fixed;inset:0;z-index:40;background:rgba(6,7,9,.97);display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:14px;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+}
+.lb-bar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.lb-head{min-width:0}
+.lb-head h2{font:400 1.35rem/1.25 var(--display);margin:0;overflow-wrap:anywhere}
+.lb-head p{margin:6px 0 0}
+.lb-stage{position:relative;min-height:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr);gap:8px;align-items:center}
+.lb-media{position:relative;min-width:0;min-height:0;height:100%;display:grid;place-items:center;overflow:hidden}
+.lb-media img,.lb-media video{position:absolute;inset:0;margin:auto;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:#000}
+.lb-media iframe{width:min(100%,calc((100vh - 260px) * 16 / 9));aspect-ratio:16/9;border:0;background:#000;display:block}
+.lb-media .media-err{color:var(--muted);margin:0}
+.nbtn{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--fg);cursor:pointer;font:500 1.1rem/1 var(--display)}
+.nbtn:hover{border-color:var(--muted)}
+.lb-desc{margin:0;max-width:70ch;color:var(--muted);overflow-wrap:anywhere;max-height:22vh;overflow:auto}
+.lb-thumbs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.lb-thumbs button{flex:0 0 auto;width:72px;height:54px;padding:0;border:2px solid transparent;border-radius:4px;overflow:hidden;background:var(--surface);cursor:pointer;color:var(--muted);font:500 .55rem/1 var(--mono)}
+.lb-thumbs button[aria-current="true"]{border-color:var(--accent)}
+.lb-thumbs img,.lb-thumbs video{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:600px){
+  .lb-stage{grid-template-columns:minmax(0,1fr)}
+  .lb-stage .nbtn{position:absolute;top:50%;z-index:2;background:rgba(6,7,9,.7);transform:translateY(-50%)}
+  .lb-stage .nbtn.prev{left:6px}
+  .lb-stage .nbtn.next{right:6px}
+}
+</style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@3.6.2/dist/decap-cms.js"></script>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="CH, back to top"><img src="logo.png" alt="CH logo" width="71" height="64"></a>
+    <nav class="nav" aria-label="Main">
+      <a class="nav-link" href="#work">Work</a>
+      <a class="nav-link" href="#about" id="nav-about">About</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="h1">
+      <div class="hud">
+        <span class="rec off" id="rec"><i></i><span id="rec-label">Standby</span></span>
+        <span id="counts">No projects yet</span>
+      </div>
+      <h1 id="h1">Media work by CH</h1>
+      <p class="intro" id="intro">Photo and video projects from my media class, collected in one place.</p>
+    </section>
+
+    <section id="work" aria-labelledby="work-h">
+      <div class="section-head">
+        <h2 class="label" id="work-h">Work</h2>
+        <div class="filters" id="filters" role="group" aria-label="Filter projects" hidden></div>
+      </div>
+      <div class="grid" id="grid"><noscript><p class="msg">Turn on JavaScript to see the projects.</p></noscript></div>
+    </section>
+
+    <section class="about" id="about" aria-labelledby="about-h" hidden>
+      <i class="b tl"></i><i class="b tr"></i><i class="b bl"></i><i class="b br"></i>
+      <h2 class="label" id="about-h">About</h2>
+      <p class="about-text" id="about-text"></p>
+      <ul class="focus" id="focus" aria-label="Focus areas"></ul>
+      <p class="label contact" id="contact" hidden></p>
+    </section>
+  </main>
+
+  <footer>
+    <img src="logo.png" alt="CH" width="49" height="44">
+    <p class="label" id="foot">Media class portfolio</p>
+  </footer>
+</div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-labelledby="lb-title" hidden>
+  <div class="lb-bar">
+    <div class="lb-head">
+      <h2 id="lb-title"></h2>
+      <p class="label" id="lb-meta"></p>
+    </div>
+    <button class="btn" type="button" id="lb-close">Close</button>
+  </div>
+  <div class="lb-stage">
+    <button class="nbtn prev" type="button" id="lb-prev" aria-label="Previous">&#8592;</button>
+    <div class="lb-media" id="lb-media"></div>
+    <button class="nbtn next" type="button" id="lb-next" aria-label="Next">&#8594;</button>
+  </div>
+  <p class="lb-desc" id="lb-desc"></p>
+  <div class="lb-thumbs" id="lb-thumbs"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var site = { heading: "Media work by CH", intro: "", about: "", focus: "", contact: "", projects: [] };
+  var projects = [];
+  var filter = "all";
+
+  function $(s) { return document.querySelector(s); }
+  function el(tag, props) {
+    var n = document.createElement(tag);
+    if (props) Object.keys(props).forEach(function (k) {
+      var v = props[k];
+      if (v == null || v === false) return;
+      if (k === "class") n.className = v;
+      else if (k === "text") n.textContent = v;
+      else if (k.indexOf("on") === 0) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? "" : v);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      [].concat(arguments[i]).forEach(function (c) {
+        if (c == null || c === false) return;
+        n.append(c.nodeType ? c : document.createTextNode(String(c)));
+      });
+    }
+    return n;
+  }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function brackets() { return ["tl", "tr", "bl", "br"].map(function (c) { return el("i", { class: "b " + c }); }); }
+
+  /* A media entry is a file path (photo or video) or a YouTube / Vimeo link. */
+  function mediaInfo(raw) {
+    var s = String(raw || "").trim();
+    var yt = s.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+    if (yt) return { kind: "embed", embed: "https://www.youtube-nocookie.com/embed/" + yt[1], thumb: "https://i.ytimg.com/vi/" + yt[1] + "/hqdefault.jpg" };
+    var vm = s.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (vm) return { kind: "embed", embed: "https://player.vimeo.com/video/" + vm[1], thumb: null };
+    var clean = s.split("?")[0].toLowerCase();
+    if (/\.(mp4|webm|mov|m4v|ogv)$/.test(clean)) return { kind: "video", src: s };
+    return { kind: "image", src: s };
+  }
+  function normalize(p, idx) {
+    var files = (Array.isArray(p.media) ? p.media : []).map(mediaInfo).filter(function (f) { return f.src || f.embed; });
+    return {
+      id: "p" + idx, title: p.title || "Untitled", description: p.description || "",
+      date: p.date ? String(p.date).slice(0, 10) : "", files: files
+    };
+  }
+  function isMotion(f) { return f.kind === "video" || f.kind === "embed"; }
+  function hasMotion(p) { return p.files.some(isMotion); }
+  function hasStill(p) { return p.files.some(function (f) { return f.kind === "image"; }); }
+  function kindOf(p) { var m = hasMotion(p), s = hasStill(p); return m && s ? "Mixed" : m ? "Video" : "Photo"; }
+  function fmtDate(d) {
+    if (!d) return "";
+    try { return new Date(d + "T12:00:00").toLocaleDateString(undefined, { month: "short", year: "numeric" }); }
+    catch (e) { return ""; }
+  }
+
+  function coverNode(f, cls) {
+    if (f.kind === "image") return el("img", { class: cls, src: f.src, alt: "", loading: "lazy" });
+    if (f.kind === "video") { var v = el("video", { class: cls, src: f.src + "#t=0.1", preload: "metadata", playsinline: true, "aria-hidden": "true", tabindex: "-1" }); v.muted = true; return v; }
+    if (f.thumb) {
+      var im = el("img", { class: cls, src: f.thumb, alt: "", loading: "lazy" });
+      im.addEventListener("error", function () { im.replaceWith(el("span", { class: cls, text: "VIDEO" })); });
+      return im;
+    }
+    return el("span", { class: cls, text: "VIDEO" });
+  }
+
+  function renderHero() {
+    var n = projects.length;
+    var v = projects.filter(hasMotion).length, ph = projects.filter(hasStill).length;
+    $("#h1").textContent = site.heading || "Media work by CH";
+    $("#intro").textContent = site.intro || "";
+    $("#intro").hidden = !site.intro;
+    $("#rec").classList.toggle("off", n === 0);
+    $("#rec-label").textContent = n ? "Rec" : "Standby";
+    $("#counts").textContent = n
+      ? pad(n) + (n === 1 ? " project" : " projects") + " · " + pad(v) + " video · " + pad(ph) + " photo"
+      : "No projects yet";
+  }
+  function renderFilters() {
+    var box = $("#filters");
+    box.replaceChildren();
+    box.hidden = projects.length < 2;
+    if (box.hidden) { filter = "all"; return; }
+    [["all", "All"], ["video", "Video"], ["image", "Photo"]].forEach(function (f) {
+      box.append(el("button", {
+        class: "chip", type: "button", "aria-pressed": String(filter === f[0]), text: f[1],
+        onclick: function () { filter = f[0]; renderFilters(); renderGrid(); }
+      }));
+    });
+  }
+  function tile(p) {
+    var meta = [fmtDate(p.date), p.files.length > 1 ? p.files.length + " files" : ""].filter(Boolean).join(" · ");
+    return el("button", { class: "tile", type: "button", "aria-label": "Open " + p.title, onclick: function () { openLb(p.id, 0); } },
+      coverNode(p.files[0], "cover"),
+      brackets(),
+      el("span", { class: "tile-top" }, el("span", { class: "pill" }, el("i"), kindOf(p))),
+      el("span", { class: "tile-bottom" },
+        el("h3", { class: "tile-title", text: p.title }),
+        el("p", { class: "tile-meta", text: meta })
+      )
+    );
+  }
+  function renderGrid(error) {
+    var g = $("#grid");
+    g.replaceChildren();
+    if (error) { g.append(el("p", { class: "msg", style: "grid-column:1/-1", text: "The projects could not be loaded. Try refreshing the page." })); return; }
+    if (!projects.length) {
+      g.append(el("div", { class: "empty" }, brackets(),
+        el("div", { class: "empty-inner" },
+          el("h3", { text: "Nothing recorded yet" }),
+          el("p", { text: "New projects will appear here soon." }))));
+      return;
+    }
+    var list = projects.filter(function (p) {
+      return filter === "all" || (filter === "video" ? hasMotion(p) : hasStill(p));
+    });
+    list.forEach(function (p) { g.append(tile(p)); });
+  }
+  function renderAbout() {
+    var t = site.about || "";
+    $("#about-text").textContent = t;
+    $("#about-text").hidden = !t;
+    var f = $("#focus");
+    f.replaceChildren();
+    String(site.focus || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 8)
+      .forEach(function (s) { f.append(el("li", { text: s })); });
+    f.hidden = !f.children.length;
+    var c = $("#contact");
+    c.textContent = site.contact || "";
+    c.hidden = !site.contact;
+    var empty = !t && f.hidden && c.hidden;
+    $("#about").hidden = empty;
+    $("#nav-about").hidden = empty;
+  }
+  function renderAll(error) {
+    document.title = (site.heading ? site.heading + " | " : "") + "CH Media Portfolio";
+    renderHero(); renderFilters(); renderGrid(error); renderAbout();
+    $("#foot").textContent = "© " + new Date().getFullYear() + " CH · Media class portfolio";
+  }
+
+  /* ---------- viewer ---------- */
+  var lb = { p: null, i: 0 }, lastFocus = null, lbOpen = false;
+  function openLb(pid, i) {
+    var p = projects.find(function (x) { return x.id === pid; });
+    if (!p) return;
+    lb = { p: p, i: i || 0 };
+    lastFocus = document.activeElement;
+    renderLb();
+    $("#lb").hidden = false;
+    lbOpen = true;
+    document.body.style.overflow = "hidden";
+    $("#lb-close").focus();
+  }
+  function closeLb() {
+    $("#lb-media").replaceChildren();
+    $("#lb").hidden = true;
+    lbOpen = false;
+    document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function stepLb(d) {
+    var n = lb.p.files.length;
+    if (n < 2) return;
+    lb.i = (lb.i + d + n) % n;
+    renderLb();
+  }
+  function renderLb() {
+    var p = lb.p, i = lb.i, f = p.files[i];
+    $("#lb-title").textContent = p.title;
+    $("#lb-meta").textContent = [kindOf(p), fmtDate(p.date), p.files.length > 1 ? (i + 1) + " / " + p.files.length : ""].filter(Boolean).join(" · ");
+    $("#lb-desc").textContent = p.description;
+    $("#lb-desc").hidden = !p.description;
+    $("#lb-prev").hidden = $("#lb-next").hidden = p.files.length < 2;
+    var m = $("#lb-media");
+    m.replaceChildren();
+    var node;
+    if (f.kind === "embed") node = el("iframe", { src: f.embed, title: p.title, allow: "fullscreen; picture-in-picture; encrypted-media", allowfullscreen: true, loading: "lazy", referrerpolicy: "strict-origin-when-cross-origin" });
+    else if (f.kind === "video") node = el("video", { src: f.src, controls: true, playsinline: true, preload: "metadata" });
+    else node = el("img", { src: f.src, alt: p.title + (p.files.length > 1 ? " (" + (i + 1) + " of " + p.files.length + ")" : "") });
+    node.addEventListener("error", function () {
+      m.replaceChildren(el("p", { class: "media-err", text: f.kind === "video" ? "This video can't be played in your browser." : "This file could not be loaded." }));
+    });
+    m.append(node);
+    var th = $("#lb-thumbs");
+    th.replaceChildren();
+    th.hidden = p.files.length < 2;
+    p.files.forEach(function (ff, idx) {
+      var t = ff.kind === "embed" && !ff.thumb ? document.createTextNode("VIDEO") : coverNode(ff, "");
+      th.append(el("button", {
+        type: "button", "aria-label": "Show item " + (idx + 1), "aria-current": String(idx === i),
+        onclick: function () { lb.i = idx; renderLb(); }
+      }, t));
+    });
+  }
+  $("#lb-close").addEventListener("click", closeLb);
+  $("#lb-prev").addEventListener("click", function () { stepLb(-1); });
+  $("#lb-next").addEventListener("click", function () { stepLb(1); });
+  $("#lb").addEventListener("click", function (e) { if (e.target === e.currentTarget) closeLb(); });
+  document.addEventListener("keydown", function (e) {
+    if (!lbOpen) return;
+    if (e.key === "Escape") closeLb();
+    else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.target.tagName !== "VIDEO") stepLb(e.key === "ArrowLeft" ? -1 : 1);
+    else if (e.key === "Tab") {
+      var items = [].slice.call($("#lb").querySelectorAll("button:not([hidden])"));
+      if (!items.length) return;
+      var first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  /* ---------- load content ---------- */
+  fetch("content/site.json", { cache: "no-cache" })
+    .then(function (r) { if (!r.ok) throw new Error("load"); return r.json(); })
+    .then(function (data) {
+      site = Object.assign(site, data || {});
+      projects = (Array.isArray(site.projects) ? site.projects : [])
+        .map(normalize)
+        .filter(function (p) { return p.files.length; })
+        .sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+      renderAll();
+    })
+    .catch(function () { renderAll(true); });
+})();
+</script>
 </body>
 </html>
